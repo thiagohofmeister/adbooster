@@ -1,0 +1,43 @@
+version: '3.5'
+services:
+  dns:
+    image: defreitas/dns-proxy-server
+    ports:
+      - 5380:5380
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/resolv.conf:/etc/resolv.conf
+    environment:
+      - MG_LOG_FILE=false
+      - MG_LOG_LEVEL=ERROR
+      - MG_REGISTER_CONTAINER_NAMES=1
+    networks:
+      default:
+        ipv4_address: $DNS_IP
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    hostname: mysql.$RESOURCE_DOMAIN
+    dns: $DNS_IP
+
+  minio:
+    image: minio/minio
+    volumes:
+      - ./minio/data:/data
+    env_file:
+      - ./.env
+    command: server /data
+    hostname: minio.$RESOURCE_DOMAIN
+    dns: $DNS_IP
+
+networks:
+  default:
+    name: $COMPOSE_PROJECT_NAME
+    ipam:
+      config:
+        - subnet: $NETWORK_CIDR

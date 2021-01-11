@@ -1,0 +1,16 @@
+mysql/data/*
+!mysql/data/.empty
+minio/data/*
+minio/data/*/*
+minio/data/.minio.sys/buckets/*
+minio/data/.minio.sys/buckets/*/*
+!minio/data/
+!minio/data/*/
+!minio/data/.minio.sys/buckets/
+!minio/data/.minio.sys/buckets/accounts/
+!minio/data/.minio.sys/buckets/accounts/policy.json
+!minio/data/accounts/.empty
+
+.env
+.idea
+package-lock.json
